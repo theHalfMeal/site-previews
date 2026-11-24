@@ -162,6 +162,86 @@ textarea { min-height: 5.5rem; resize: vertical; }
 .hours .today { color: var(--tan); font-weight: 600; }
 footer { padding-block: 3rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .84rem; display: grid; gap: .6rem; }
 
+
+/* ===== Wow layer ===== */
+/* Hero: parallax media wrapper + stitched underline that sews itself */
+.hero-media { position: absolute; inset: 0; will-change: transform; transform-origin: 50% 60%; }
+.hero-media::after { content: ""; position: absolute; inset: 0; background: radial-gradient(60% 50% at var(--lx, 70%) var(--ly, 30%), rgba(255, 214, 170, .16), transparent 70%); mix-blend-mode: soft-light; pointer-events: none; transition: background-position .2s; }
+.hero .wrap { will-change: transform, opacity; }
+.stitch { display: block; width: min(34rem, 92%); height: 22px; margin-top: .5rem; overflow: visible; }
+.stitch .thread { fill: none; stroke: #f0b884; stroke-width: 2.4; stroke-linecap: round; stroke-dasharray: 9 8; }
+.stitch .reveal { fill: none; stroke: #fff; stroke-width: 10; stroke-dasharray: 520; stroke-dashoffset: 520; animation: sew 2s cubic-bezier(.65, 0, .35, 1) 1.05s forwards; }
+.stitch .needle { offset-path: path("M4 12 C 90 3, 170 20, 250 11 S 420 4, 500 13"); offset-distance: 0%; offset-rotate: auto; animation: needle 2s cubic-bezier(.65, 0, .35, 1) 1.05s forwards; opacity: 0; }
+@keyframes sew { to { stroke-dashoffset: 0; } }
+@keyframes needle { 0% { offset-distance: 0%; opacity: 1; } 92% { opacity: 1; } 100% { offset-distance: 100%; opacity: 0; } }
+.scroll-cue { position: absolute; z-index: 2; left: 50%; bottom: 18px; translate: -50% 0; display: grid; justify-items: center; gap: .35rem; color: rgba(255,255,255,.75); font-size: .68rem; letter-spacing: .18em; text-transform: uppercase; opacity: 0; animation: fadeUp 1s var(--spring) 2.4s forwards; }
+.scroll-cue i { width: 22px; height: 34px; border-radius: 12px; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.6); position: relative; }
+.scroll-cue i::after { content: ""; position: absolute; left: 50%; top: 7px; width: 3px; height: 7px; margin-left: -1.5px; border-radius: 2px; background: #fff; animation: wheel 1.8s var(--spring) infinite; }
+@keyframes wheel { 0% { transform: translateY(0); opacity: 1; } 70% { transform: translateY(10px); opacity: 0; } 100% { opacity: 0; } }
+@media (max-width: 700px) { .scroll-cue { display: none; } }
+
+/* Scroll-driven services band: moves only when you scroll, leans with scroll speed */
+.band { overflow: hidden; padding-block: clamp(1.4rem, 3vw, 2.2rem); border-bottom: 1px solid var(--line); background: var(--bg); }
+.band-track { display: flex; width: max-content; gap: 2.2rem; align-items: center; will-change: transform; font-family: var(--display); font-weight: 800; font-stretch: 118%; font-size: clamp(2.4rem, 6vw, 5rem); letter-spacing: -0.03em; line-height: 1; white-space: nowrap; }
+.band-track span:nth-child(4n+1) { color: var(--ink); }
+.band-track span:nth-child(4n+3) { color: transparent; -webkit-text-stroke: 1.5px var(--muted); }
+.band-track i { font-style: normal; color: var(--tan); font-size: .5em; }
+
+/* Before/after: the divider is a stitched seam */
+.handle::before { background: repeating-linear-gradient(180deg, #fff 0 9px, transparent 9px 16px); width: 3px; box-shadow: none; filter: drop-shadow(0 0 6px rgba(0,0,0,.5)); }
+.knob { transition: transform .5s var(--bounce); }
+.compare .pct { position: absolute; left: var(--p, 50%); bottom: 18px; translate: -50% 0; font-size: .72rem; font-weight: 700; letter-spacing: .1em; color: #fff; padding: .3rem .6rem; border-radius: 999px; background: rgba(10,8,6,.55); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); opacity: 0; transition: opacity .25s; font-variant-numeric: tabular-nums; pointer-events: none; }
+.compare.dragging .pct { opacity: 1; }
+
+/* Services: tiles unzip into view, leather sheen follows the pointer */
+.tile { clip-path: inset(100% 0 0 0 round 24px); transition: clip-path 1.2s cubic-bezier(.22, 1, .36, 1) var(--d, 0s); }
+.tile img { transform: scale(1.18); transition: transform 1.6s cubic-bezier(.22, 1, .36, 1) var(--d, 0s); }
+.bento.in .tile { clip-path: inset(0 0 0 0 round 24px); }
+.bento.in .tile img { transform: scale(1); }
+.bento.in .tile:hover img { transform: scale(1.05); transition-delay: 0s; transition-duration: 1.2s; }
+.tile .sheen { position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: 0; transition: opacity .4s; background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 226, 190, .22), transparent 60%); mix-blend-mode: soft-light; }
+.tile:hover .sheen { opacity: 1; }
+.tile .in { position: relative; z-index: 1; transform: translateY(14px); opacity: 0; transition: transform 1s var(--spring) calc(var(--d, 0s) + .35s), opacity .6s calc(var(--d, 0s) + .35s); }
+.bento.in .tile .in { transform: none; opacity: 1; }
+.tile .go { position: absolute; z-index: 1; top: 16px; right: 16px; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.16); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); transition: transform .6s var(--bounce), background-color .25s, color .25s; }
+.tile:hover .go { transform: rotate(-45deg); background: var(--tan); color: var(--tan-ink); }
+
+/* Pinned rebuild story: vertical scroll drives a horizontal walk through the job */
+.rebuild { position: relative; height: 420vh; background: #0d0b09; color: #f0ece6; }
+.rebuild .pin { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 1fr auto; padding-block: clamp(5rem, 11vh, 7rem) clamp(1.5rem, 4vh, 2.5rem); }
+.rebuild .head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 1rem; }
+.rebuild .h2 span { color: #8d8478; }
+.rebuild .count { font-family: var(--display); font-weight: 800; font-stretch: 112%; font-size: clamp(2.6rem, 5vw, 4rem); line-height: 1; font-variant-numeric: tabular-nums; color: #d8935a; }
+.rebuild .count small { font-size: .4em; color: #8d8478; font-weight: 600; }
+.rb-track { display: flex; gap: clamp(14px, 2vw, 26px); align-items: center; width: max-content; padding-inline: max(var(--gut), calc((100vw - var(--wrap)) / 2 + 20px)); will-change: transform; }
+.rb-card { position: relative; width: clamp(280px, 38vw, 560px); aspect-ratio: 4 / 3; border-radius: 26px; overflow: hidden; flex: none; background: #1d1a17; transform-origin: 50% 50%; will-change: transform, filter; }
+.rb-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; will-change: transform; }
+.rb-card::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgba(8,6,5,.88)); }
+.rb-card .txt { position: absolute; z-index: 1; left: 0; right: 0; bottom: 0; padding: clamp(1rem, 2.4vw, 1.6rem); display: grid; gap: .35rem; }
+.rb-card .n { font-family: var(--display); font-weight: 800; font-size: .8rem; letter-spacing: .16em; color: #f0b884; }
+.rb-card b { font-family: var(--display); font-weight: 700; font-stretch: 110%; font-size: clamp(1.4rem, 2.4vw, 2rem); line-height: 1.05; letter-spacing: -0.02em; }
+.rb-card p { color: rgba(255,255,255,.82); font-size: .95rem; max-width: 30rem; }
+.rb-progress { position: relative; height: 30px; margin-inline: max(var(--gut), calc((100vw - var(--wrap)) / 2 + 20px)); }
+.rb-progress svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.rb-progress .base { stroke: rgba(255,255,255,.16); stroke-width: 2; stroke-dasharray: 8 7; }
+.rb-progress .done { stroke: #d8935a; stroke-width: 2.6; stroke-dasharray: 8 7; }
+.rb-progress .dot { fill: #f0ece6; }
+.rb-labels { display: flex; justify-content: space-between; margin-inline: max(var(--gut), calc((100vw - var(--wrap)) / 2 + 20px)); font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; color: #8d8478; }
+.rb-labels span { transition: color .3s; } .rb-labels span.on { color: #f0ece6; }
+@media (max-width: 700px) { .rb-card { width: 80vw; aspect-ratio: 4 / 5; } .rb-track { padding-inline: 10vw; } }
+@media (max-width: 700px) { .rb-labels span:not(.on) { visibility: hidden; } .rb-labels { justify-content: center; } }
+
+/* Magnetic buttons + stitched success check */
+.magnet { transition: transform .7s var(--bounce), box-shadow .4s var(--spring), background-color .25s; }
+.done-check { display: inline-grid; place-items: center; width: 26px; height: 26px; margin-right: .5rem; vertical-align: -7px; border-radius: 50%; background: var(--tan); color: var(--tan-ink); animation: pop .6s var(--bounce); }
+.done-check path { stroke-dasharray: 20; stroke-dashoffset: 20; animation: draw .5s .15s cubic-bezier(.65,0,.35,1) forwards; }
+@keyframes pop { from { transform: scale(0); } }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .tile, .bento .tile, .tile img, .tile .in { clip-path: none !important; transform: none !important; opacity: 1 !important; }
+  .stitch .reveal { stroke-dashoffset: 0; } .stitch .needle { display: none; } .scroll-cue i::after { animation: none; }
+}
+
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0s !important; transition-duration: .01ms !important; } .hero img { transform: scale(1.02); } }
 </style>
 </head>
@@ -174,29 +254,33 @@ footer { padding-block: 3rem; border-top: 1px solid var(--line); color: var(--mu
       <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M8 26c0-9 2-17 8-20 6 3 8 11 8 20" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M11 21h10M12 16h8" stroke="#d8935a" stroke-width="2" stroke-linecap="round" stroke-dasharray="2.2 2.6"/></svg>
       <span>RIVER CITY<small>Upholstery II</small></span>
     </a>
-    <nav class="nav" id="nav" aria-label="Main"><span class="nav-ind" id="navInd" aria-hidden="true"></span><a href="#services">Services</a><a href="#work">Before & After</a><a href="#quote">Get a Quote</a><a href="#visit">Visit</a></nav>
+    <nav class="nav" id="nav" aria-label="Main"><span class="nav-ind" id="navInd" aria-hidden="true"></span><a href="#services">Services</a><a href="#work">Before & After</a><a href="#rebuild">Our Process</a><a href="#quote">Get a Quote</a><a href="#visit">Visit</a></nav>
     <div class="tools">
       <a class="phone" href="tel:+15095344764">(509) 534-4764</a>
       <button class="icon-btn theme-btn" type="button" id="themeBtn" aria-label="Switch to light mode"><svg viewBox="0 0 24 24" aria-hidden="true"><mask id="mm"><rect width="24" height="24" fill="#fff"/><circle class="cut" cx="24" cy="2" r="6" fill="#000"/></mask><circle class="core" cx="12" cy="12" r="5" fill="currentColor" mask="url(#mm)"/><g class="rays" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 2.5v2"/><path d="M12 19.5v2"/><path d="M2.5 12h2"/><path d="M19.5 12h2"/><path d="m5.3 5.3 1.4 1.4"/><path d="m17.3 17.3 1.4 1.4"/><path d="m5.3 18.7 1.4-1.4"/><path d="m17.3 6.7 1.4-1.4"/></g></svg></button>
-      <a class="btn cta" href="#quote">Get a Quote</a>
+      <a class="btn cta magnet" href="#quote">Get a Quote</a>
     </div>
   </header>
 </div>
 
 <main>
   <section class="hero" id="top" aria-label="River City Upholstery II">
-    <img src="img/hero.jpg" alt="A brown leather vehicle bench seat with stitched panels" width="2200" height="3300" fetchpriority="high">
+    <div class="hero-media" id="heroMedia"><img src="img/hero.jpg" alt="A brown leather vehicle bench seat with stitched panels" width="2200" height="3300" fetchpriority="high"></div>
     <div class="wrap">
       <h1><span class="ln"><span style="--i:0">Seats, headliners and tops,</span></span><span class="ln"><span style="--i:1"><em>stitched in Spokane Valley.</em></span></span></h1>
+      <svg class="stitch" viewBox="0 0 504 22" preserveAspectRatio="none" aria-hidden="true"><defs><mask id="sewMask" maskUnits="userSpaceOnUse"><path class="reveal" d="M4 12 C 90 3, 170 20, 250 11 S 420 4, 500 13"/></mask></defs><path class="thread" mask="url(#sewMask)" d="M4 12 C 90 3, 170 20, 250 11 S 420 4, 500 13"/><g class="needle"><path d="M-14 0 H8" stroke="#e9e4dc" stroke-width="2.2" stroke-linecap="round"/><circle cx="-11" cy="0" r="1.6" fill="none" stroke="#e9e4dc" stroke-width="1.2"/></g></svg>
       <div class="row">
         <div>
           <p>Auto, truck and boat upholstery on East Broadway. Torn seats, sagging headliners and worn interiors, repaired or rebuilt.</p>
           <div class="chips"><span><b>★ 4.2</b> on Google · 29 reviews</span><span>Open weekdays from 6 am</span><span>5403 E Broadway Ave</span></div>
         </div>
-        <div class="ctas"><a class="btn" href="#quote">Get a Quote <span class="arr" aria-hidden="true">→</span></a><a class="btn ghost" href="tel:+15095344764">Call (509) 534-4764</a></div>
+        <div class="ctas"><a class="btn magnet" href="#quote">Get a Quote <span class="arr" aria-hidden="true">→</span></a><a class="btn ghost magnet" href="tel:+15095344764">Call (509) 534-4764</a></div>
       </div>
     </div>
+    <div class="scroll-cue" aria-hidden="true"><i></i>Scroll</div>
   </section>
+
+  <div class="band" aria-hidden="true"><div class="band-track" id="band"></div></div>
 
   <section class="ba" id="work" aria-label="Before and after">
     <div class="wrap grid">
@@ -209,7 +293,7 @@ footer { padding-block: 3rem; border-top: 1px solid var(--line); color: var(--mu
       <div class="compare" id="compare" style="--p:50%" role="slider" tabindex="0" aria-label="Compare before and after" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
         <img src="img/before.jpg" alt="A worn, torn truck interior" width="1600" height="2400" loading="lazy">
         <img class="after" src="img/after.jpg" alt="A newly upholstered seat with quilted stitching" width="1600" height="2400" loading="lazy">
-        <span class="tag l">Before</span><span class="tag r">After</span>
+        <span class="tag l">Before</span><span class="tag r">After</span><span class="pct" id="pct">50%</span>
         <div class="handle"><div class="knob"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 5 2 10l5 5M13 5l5 5-5 5"/></svg></div></div>
       </div>
     </div>
@@ -219,12 +303,29 @@ footer { padding-block: 3rem; border-top: 1px solid var(--line); color: var(--mu
     <div class="wrap">
       <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:1.5rem"><div><div class="eyebrow">Services</div><h2 class="h2" style="margin-top:.6rem">Anything you sit on <span>that has an engine.</span></h2></div><p class="lead">Typical auto upholstery services, listed here as a starting point. We’d match this list to exactly what your shop offers.</p></div>
       <div class="bento">
-        <a class="tile t1" href="#quote"><img src="img/car.jpg" alt="Black leather car seats" width="1200" height="800" loading="lazy"><div class="in"><b>Car & Truck Seats</b><small>Torn panels, split seams and worn bolsters repaired or fully recovered.</small></div></a>
-        <a class="tile t2" href="#quote"><img src="img/boat.jpg" alt="A boat helm with cushioned seats" width="1200" height="800" loading="lazy"><div class="in"><b>Boat & Marine</b><small>UV-resistant marine vinyl for seats, cushions and covers.</small></div></a>
-        <a class="tile t3" href="#quote"><img src="img/classic.jpg" alt="A vintage car interior with worn seats" width="1200" height="1800" loading="lazy"><div class="in"><b>Classic Restorations</b><small>Original patterns matched for vintage interiors.</small></div></a>
-        <a class="tile t4" href="#quote"><img src="img/white.jpg" alt="A car interior with white leather seats" width="1200" height="1797" loading="lazy"><div class="in"><b>Headliners</b><small>Sagging roof lining replaced.</small></div></a>
-        <a class="tile t5" href="#quote"><img src="img/stitch.jpg" alt="Black leather with orange contrast stitching" width="1200" height="1800" loading="lazy"><div class="in"><b>Custom Stitching</b><small>Contrast thread, piping, logos.</small></div></a>
-        <a class="tile t6" href="#quote"><img src="img/craft.jpg" alt="A craftsman stitching leather at a sewing machine" width="1600" height="1067" loading="lazy"><div class="in"><b>Done by Hand, in the Shop</b><small>Every job cut and stitched at 5403 E Broadway Ave.</small></div></a>
+        <a class="tile t1" href="#quote" style="--d:0.00s"><span class="go" aria-hidden="true">→</span><img src="img/car.jpg" alt="Black leather car seats" width="1200" height="800" loading="lazy"><div class="in"><b>Car & Truck Seats</b><small>Torn panels, split seams and worn bolsters repaired or fully recovered.</small></div></a>
+        <a class="tile t2" href="#quote" style="--d:0.09s"><span class="go" aria-hidden="true">→</span><img src="img/boat.jpg" alt="A boat helm with cushioned seats" width="1200" height="800" loading="lazy"><div class="in"><b>Boat & Marine</b><small>UV-resistant marine vinyl for seats, cushions and covers.</small></div></a>
+        <a class="tile t3" href="#quote" style="--d:0.18s"><span class="go" aria-hidden="true">→</span><img src="img/classic.jpg" alt="A vintage car interior with worn seats" width="1200" height="1800" loading="lazy"><div class="in"><b>Classic Restorations</b><small>Original patterns matched for vintage interiors.</small></div></a>
+        <a class="tile t4" href="#quote" style="--d:0.27s"><span class="go" aria-hidden="true">→</span><img src="img/white.jpg" alt="A car interior with white leather seats" width="1200" height="1797" loading="lazy"><div class="in"><b>Headliners</b><small>Sagging roof lining replaced.</small></div></a>
+        <a class="tile t5" href="#quote" style="--d:0.36s"><span class="go" aria-hidden="true">→</span><img src="img/stitch.jpg" alt="Black leather with orange contrast stitching" width="1200" height="1800" loading="lazy"><div class="in"><b>Custom Stitching</b><small>Contrast thread, piping, logos.</small></div></a>
+        <a class="tile t6" href="#quote" style="--d:0.45s"><span class="go" aria-hidden="true">→</span><img src="img/craft.jpg" alt="A craftsman stitching leather at a sewing machine" width="1600" height="1067" loading="lazy"><div class="in"><b>Done by Hand, in the Shop</b><small>Every job cut and stitched at 5403 E Broadway Ave.</small></div></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="rebuild" id="rebuild" aria-label="How a seat gets rebuilt">
+    <div class="pin">
+      <div class="wrap head" style="width:100%"><div><div class="eyebrow">How a seat gets rebuilt</div><h2 class="h2" style="margin-top:.6rem">Five steps. <span>Every stitch by hand.</span></h2></div><div class="count" aria-hidden="true"><span id="rbNum">01</span><small> / 05</small></div></div>
+      <div style="display:grid;align-items:center;overflow:visible"><div class="rb-track" id="rbTrack">
+        <article class="rb-card"><img src="img/before.jpg" alt="A worn truck interior" width="1600" height="2400" loading="lazy"><div class="txt"><span class="n">01 · STRIP</span><b>Down to the frame</b><p>Old covers and tired foam come off, and we check the springs and frame.</p></div></article>
+        <article class="rb-card"><img src="img/classic.jpg" alt="A vintage car interior" width="1200" height="1800" loading="lazy"><div class="txt"><span class="n">02 · PATTERN</span><b>Every panel traced</b><p>The old cover becomes the template, so the new one fits exactly.</p></div></article>
+        <article class="rb-card"><img src="img/stitch.jpg" alt="Black leather with contrast stitching" width="1200" height="1800" loading="lazy"><div class="txt"><span class="n">03 · CUT</span><b>Leather, vinyl or cloth</b><p>Matched to factory color, or something new with contrast thread.</p></div></article>
+        <article class="rb-card"><img src="img/craft.jpg" alt="Stitching at an industrial sewing machine" width="1600" height="1067" loading="lazy"><div class="txt"><span class="n">04 · STITCH</span><b>Sewn on a walking-foot machine</b><p>Double-stitched seams that hold up to years of sliding in and out.</p></div></article>
+        <article class="rb-card"><img src="img/after.jpg" alt="A finished seat with quilted stitching" width="1600" height="2400" loading="lazy"><div class="txt"><span class="n">05 · FIT</span><b>Back in, tight and even</b><p>New foam, cover stretched and fastened, seat bolted back in.</p></div></article>
+      </div></div>
+      <div style="display:grid;gap:.6rem">
+        <div class="rb-progress" aria-hidden="true"><svg viewBox="0 0 1000 30" preserveAspectRatio="none"><line class="base" x1="0" y1="15" x2="1000" y2="15"/><line class="done" id="rbDone" x1="0" y1="15" x2="0" y2="15"/><circle class="dot" id="rbDot" cx="0" cy="15" r="6"/></svg></div>
+        <div class="rb-labels" aria-hidden="true"><span class="on">Strip</span><span>Pattern</span><span>Cut</span><span>Stitch</span><span>Fit</span></div>
       </div>
     </div>
   </section>
@@ -249,7 +350,7 @@ footer { padding-block: 3rem; border-top: 1px solid var(--line); color: var(--mu
         <label class="f" for="qNotes">Year, make and model, plus anything else<textarea id="qNotes" placeholder="2012 F-150, driver seat torn along the bolster"></textarea></label>
         <div class="fields"><label class="f" for="qName">Name<input id="qName" autocomplete="name" required></label><label class="f" for="qPhone">Phone<input id="qPhone" type="tel" inputmode="tel" autocomplete="tel" required></label></div>
         <p class="summary" id="qSum" aria-live="polite"></p>
-        <button class="btn" type="submit">Request My Quote <span class="arr" aria-hidden="true">→</span></button>
+        <button class="btn magnet" type="submit">Request My Quote <span class="arr" aria-hidden="true">→</span></button>
         <p class="msg" id="qMsg" aria-live="polite"></p>
       </form>
     </div>
@@ -311,7 +412,7 @@ nav.addEventListener('pointerleave', () => (ind.style.opacity = 0));
 /* Before / after */
 (() => {
   const cmp = document.getElementById('compare'); let p = 50, anim = null, drag = null, touched = false; const vt = tracker();
-  const setP = (v) => { p = v; cmp.style.setProperty('--p', clamp(v, -4, 104) + '%'); cmp.setAttribute('aria-valuenow', Math.round(clamp(v, 0, 100))); };
+  const pct = document.getElementById('pct'); const setP = (v) => { p = v; cmp.style.setProperty('--p', clamp(v, -4, 104) + '%'); const r = Math.round(clamp(v, 0, 100)); cmp.setAttribute('aria-valuenow', r); pct.textContent = (100 - r) + '% new'; };
   const shape = (raw, W) => raw < 0 ? -rubberband(-raw * W / 100, W) * 100 / W : raw > 100 ? 100 + rubberband((raw - 100) * W / 100, W) * 100 / W : raw;
   const settle = (to, v = 0, d = 1) => { anim && anim.stop(); anim = spring({ from: p, to, velocity: v, damping: d, onUpdate: setP }); };
   cmp.addEventListener('pointerdown', (e) => { if (e.button !== 0) return; anim && anim.stop(); touched = true; const r = cmp.getBoundingClientRect(), hx = r.left + r.width * p / 100, onH = Math.abs(e.clientX - hx) < 34;
@@ -338,8 +439,56 @@ document.getElementById('qForm').addEventListener('submit', (e) => {
   if (!work().length) { msg.textContent = 'Pick at least one thing that needs work.'; return; }
   if (!n.value.trim()) { msg.textContent = 'Add your name so the shop knows who to call.'; n.focus(); return; }
   if (ph.value.replace(/\D/g, '').length < 10) { msg.textContent = 'Enter a 10-digit phone number for the callback.'; ph.focus(); return; }
-  msg.textContent = 'On the live site this goes straight to the shop. This preview doesn’t send anything.';
+  msg.innerHTML = '<span class="done-check" aria-hidden="true"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m3.5 8.5 3 3 6-7"/></svg></span>Got it. On the live site this goes straight to the shop. This preview doesn’t send anything.';
 });
+
+
+/* ===== Wow layer ===== */
+const lerp = (a, b, t) => a + (b - a) * t;
+const smooth = (a, b, v) => { const t = clamp((v - a) / (b - a)); return t * t * (3 - 2 * t); };
+const hero = document.getElementById('top'), heroMedia = document.getElementById('heroMedia'), heroWrap = hero.querySelector('.wrap');
+/* Light follows the pointer across the leather */
+hero.addEventListener('pointermove', (e) => { const r = hero.getBoundingClientRect(); heroMedia.style.setProperty('--lx', ((e.clientX - r.left) / r.width * 100).toFixed(1) + '%'); heroMedia.style.setProperty('--ly', ((e.clientY - r.top) / r.height * 100).toFixed(1) + '%'); });
+/* Services band built from words, doubled for a seamless wrap */
+const words = ['Seats', 'Headliners', 'Convertible tops', 'Boat cushions', 'Door panels', 'Carpet', 'Steering wheels', 'Custom stitching'];
+const band = document.getElementById('band');
+band.innerHTML = [...words, ...words].map((w) => `<span>${w}</span><i>✦</i>`).join('');
+/* Seat-rebuild story */
+const rb = document.getElementById('rebuild'), rbTrack = document.getElementById('rbTrack'), rbCards = [...rbTrack.children], rbNum = document.getElementById('rbNum');
+const rbDone = document.getElementById('rbDone'), rbDot = document.getElementById('rbDot'), rbLabels = [...rb.querySelectorAll('.rb-labels span')];
+/* Tiles unzip once the grid comes into view; sheen tracks the pointer */
+const bento = document.querySelector('.bento');
+new IntersectionObserver(([en], io) => { if (en.isIntersecting) { bento.classList.add('in'); io.disconnect(); } }, { threshold: .18 }).observe(bento);
+bento.querySelectorAll('.tile').forEach((t) => { const sh = document.createElement('span'); sh.className = 'sheen'; t.prepend(sh);
+  t.addEventListener('pointermove', (e) => { const r = t.getBoundingClientRect(); t.style.setProperty('--mx', (e.clientX - r.left) + 'px'); t.style.setProperty('--my', (e.clientY - r.top) + 'px'); }); });
+/* Magnetic buttons: drift toward the pointer, spring back on leave */
+if (matchMedia('(pointer: fine)').matches && !REDUCE) document.querySelectorAll('.magnet').forEach((b) => {
+  b.addEventListener('pointermove', (e) => { const r = b.getBoundingClientRect(); const dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2); b.style.transform = `translate(${dx * .22}px, ${dy * .32}px)`; });
+  b.addEventListener('pointerleave', () => { b.style.transform = ''; });
+});
+/* One frame loop for everything scroll-linked */
+let bandX = 0, lastY = scrollY, vel = 0, rbP = 0;
+function frame() {
+  const y = scrollY, dy = y - lastY; lastY = y; vel = lerp(vel, dy, .12);
+  // hero parallax: image pushes in, copy lifts and fades
+  const hp = clamp(y / (hero.offsetHeight || 1));
+  if (hp < 1.05 && !REDUCE) { heroMedia.style.transform = `translate3d(0, ${(hp * 14).toFixed(2)}%, 0) scale(${(1 + hp * .12).toFixed(4)})`; heroWrap.style.transform = `translate3d(0, ${(-hp * 70).toFixed(1)}px, 0)`; heroWrap.style.opacity = (1 - smooth(.15, .75, hp)).toFixed(3); }
+  // band: moves with scroll distance, leans with scroll speed
+  if (!REDUCE) { bandX -= dy * .45 + .0; const half = band.scrollWidth / 2 || 1; bandX = ((bandX % half) - half) % half; band.style.transform = `translate3d(${bandX.toFixed(1)}px,0,0) skewX(${clamp(-vel * .25, -10, 10).toFixed(2)}deg)`; }
+  // rebuild story
+  const r = rb.getBoundingClientRect();
+  if (r.bottom > -50 && r.top < innerHeight + 50) {
+    const target = clamp(-r.top / (r.height - innerHeight)); rbP = REDUCE ? target : lerp(rbP, target, .12);
+    const maxX = Math.max(0, rbTrack.scrollWidth - innerWidth); rbTrack.style.transform = `translate3d(${(-rbP * maxX).toFixed(1)}px,0,0)`;
+    const cx = innerWidth / 2; let best = 0, bd = Infinity;
+    rbCards.forEach((c, i) => { const cr = c.getBoundingClientRect(), mid = cr.left + cr.width / 2, d = Math.abs(mid - cx) / innerWidth; if (d < bd) { bd = d; best = i; }
+      const k = clamp(1 - d * 1.6); c.style.transform = `scale(${(.86 + .14 * k).toFixed(4)})`; c.style.filter = `brightness(${(.55 + .45 * k).toFixed(3)})`; c.querySelector('img').style.transform = `translate3d(${((mid - cx) / innerWidth * -8).toFixed(2)}%,0,0) scale(1.15)`; });
+    rbNum.textContent = String(best + 1).padStart(2, '0'); rbLabels.forEach((l, i) => l.classList.toggle('on', i === best));
+    const x = (rbP * 1000).toFixed(1); rbDone.setAttribute('x2', x); rbDot.setAttribute('cx', x);
+  }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
 
 /* Today's hours */
 const d = new Date().getDay(); document.querySelectorAll('#hours [data-d]').forEach((s) => { if (s.dataset.d.split(',').map(Number).includes(d)) s.classList.add('today'); });
